@@ -2,14 +2,11 @@
 const express = require("express");
 const app = express(); // Boa prática
 
-// ROUTE: 
-    //HTTP METHOD
-    //NAME
-    //Callback (function) 
-app.get("/home", (req, res) => { //Express.get (método GET, função callback)
-    // res = response, req = requisition
+const userRoute = require('./src/routes/user.route');
+const port = 3000;
 
-});
+app.use(express.json());
+app.use("/user", userRoute);
 
 // Express está ouvindo na porta 3000
-app.listen(3000);
+app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
