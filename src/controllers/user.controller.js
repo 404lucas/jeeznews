@@ -30,7 +30,7 @@ const create = async (req, res) => {
 };
 
 const findAll = async (req, res) => {
-    const users = await userService.findAllService();
+    const users = await userService.findAllService(); //
 
     if (users.lenght === 0) {
         return res.status(400).send({ message: "There are no registered users" });
@@ -40,19 +40,39 @@ const findAll = async (req, res) => {
 };
 
 const findById = async (req, res) => {
-    const id = req.params.id;
+    const id = req.params.id; //id nos parâmetros da requisição, na url
 
-    if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(400).send({message: "Invalid id"});
+    if (!mongoose.Types.ObjectId.isValid(id)) { //se id não é um id válido do mongo
+        return res.status(400).send({ message: "Invalid id" }); // id inválido
     };
 
-    const user = await userService.findByIdService(id);
+    const user = await userService.findByIdService(id); // await na função finbyid do mongo
+
+    if (!user) { //se usuário não for encontrado
+        return res.status(400).send({ message: "User not found" }); //usuário não enconstrado
+    }
+
+    res.send({ message: "User found!", user });
+}
+
+const findByEmail = async (req, res) => {
+    const email = req.params.email;
+
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+    // No seu código, onde você faz a validação do e-mail
+    if (!isValidEmail(email)) {
+        return res.status(400).send({ message: "Invalid email" });
+    }
+    const user = await userService.findByEmailService(email);
 
     if (!user) {
         return res.status(400).send({ message: "User not found" });
     }
 
-    res.send({message: "User found!", user});
+    res.send({ message: "User found!", user });
 }
 
-module.exports = { create, findAll, findById }; // Exportando funcção
+module.exports = { create, findAll, findById, findByEmail }; // Exportando funcção
